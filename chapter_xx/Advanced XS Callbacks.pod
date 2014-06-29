@@ -34,8 +34,12 @@ Well the thing to remember is this is not an OCI tutoral so I will not be going 
 filling in a little backgound info.
 
 =head2 DBD::Oracle
-Well this set the whole DBI movement woring and it still going so something mush be right with it.  Now to undersand the 
-patch a little inrto to the archetcure of this moduel would help out some and give you an idea how a larger
+
+Well this was the first Driver for DBI a tool so common we hardly wvern think about using it. Just think
+the arectecute of this little program hasn't changed that much shince it was first introducred 20 years ago 
+and it still going strong so something mush be right with it. 
+
+Now to undersand the patch a little intro to the archetcure of this moduel would help out some and give you an idea how a larger
 scale XS module is put together. So here is the 25c tour
 
 =head3 Inside DB::Oracle
