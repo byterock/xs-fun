@@ -19,7 +19,7 @@ Oracle clients and OS.
 So be prepared for some frustraing momemts if you age going to try to patch DBD::Oracle, or any of the DBDs
 that call out in the same way as DBD::Oracle
 
-=head 2 OCI
+=head2 OCI
 
 Well the OCI Call Interface Programmer's Guide is a 20+ chapter behemoth that is a sure fire cure for insomnia 
 ans hasn't rellay changed much form the 8i edition till the latests 11g. You will find everything but the
@@ -33,12 +33,12 @@ and feed them into google odds are a page with DBD::Oracle code will come up.
 Well the thing to remember is this is not an OCI tutoral so I will not be going into any depths on OCI just
 filling in a little backgound info.
 
-=head 2 DBD::Oracle
+=head2 DBD::Oracle
 Well this set the whole DBI movement woring and it still going so something mush be right with it.  Now to undersand the 
 patch a little inrto to the archetcure of this moduel would help out some and give you an idea how a larger
 scale XS module is put together. So here is the 25c tour
 
-=head 3 Inside DB::Oracle
+=head3 Inside DB::Oracle
 Browsing the code base of DBD::Oracle you will quickly notice is is unlike you typical CPAN Perl module and even the 
 XS modules you have been playing with.  
 
