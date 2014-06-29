@@ -4,60 +4,45 @@
 
 Now we are going to jump off the deep end of XS programming and do a patch to DBD::Oracle.  
 Now DBD::Oracle is the poster child of early XSW programming.  Starting out
-way back in the stone ages starting with somthing called 'Oraperl.pm' back in 1994 that eventually 
+way back in the stone ages starting with something called 'Oraperl.pm' back in 1994 that eventually 
 morphed into DBI and DBD::Oracle. 
 
-Now looking at the DBD::Oracle Code it is shall we say a little special as is not a straiforward call 
-out to a 'C' or 'C++' library,  you are calling out to a very custome 'C' program and then to 
-a very obscure 'C' library called OCI (Orcale Call Interface).  
+Now looking at the DBD::Oracle Code it is shall we say a little special as is not a straightforward call 
+out to a 'C' or 'C++' library,  you are calling out to a very custom 'C' program and then to 
+a very obscure 'C' library called OCI (Oracle Call Interface).  
 
-Not only are we comlicating matter by adding in our own 'c' glue layer form PerlXS out to OIC and back
-we also  have the problem of mostlikely the largest custom Makefile.PL on Cpan some 2000+ lines and tring 
-to make DBD::Oracle with the latest and older Oracle clients and OS and nort breaking it for older
-Oracle clients and OS.  
+Not only are we complicating matter by adding in our own 'c' glue layer form Perl XS out to OIC and back
+we also  have the problem keeping, most likely the largest custom Makefile.PL on CPAN some 2000+ lines working and by working I mean making install DBD::Oracle against almost every Oracle Client working in almost every OS and making it compile with the latest and greatest  and  making sure you did not break it for older Oracle clients and OSes.  
 
-So be prepared for some frustraing momemts if you age going to try to patch DBD::Oracle, or any of the DBDs
-that call out in the same way as DBD::Oracle
+So be prepared for some frustrating moments if you age going to try to patch DBD::Oracle, or any of the DBDs
 
 =head2 OCI
 
-Well the OCI Call Interface Programmer's Guide is a 20+ chapter behemoth that is a sure fire cure for insomnia 
-ans hasn't rellay changed much form the 8i edition till the latests 11g. You will find everything but the
-code examples where poorly written last century and the snippits given in the text are usualy much too short 
-to make any sence of.
+DBD::Oracle works by calling out to the OCI, which is one of the greatest programming cabals on earth, I have never seen a job advertisement for some-one with OCI skills, there is little or nothing on the web, Oracle's  'Call Interface Programmer's Guide' is a 20+ chapter, 2000+ page  behemoth that is a sure fire cure for insomnia 
+and hasn't really changed much form the 8i edition till the latest 11g. Now you will find everything about OCI documented there but the code examples where poorly written last century not included anymore by Oracle (but you can get them on-line if you search really hard) and the example code snippets  given in the text are usually much too short 
+to make any sense of.
 
-Googleing for code examples will not help much many is the time when I googeled for an useage eample and only
-got a few rerferqaces usually back to my own code. Even today if you take a few random OCI calls from DBD::Oracle
-and feed them into google odds are a page with DBD::Oracle code will come up.
+Goggling for code examples will not help much many is the time when I was googling for an usage example and only and got a few references and sometimes I was referred right back back to my own code. Even today if you take a few random OCI calls and feed them into google odds are a page with DBD::Oracle code will come up.
 
-Well the thing to remember is this is not an OCI tutoral so I will not be going into any depths on OCI just
-filling in a little backgound info.
+Well the thing to remember is this is not an OCI tutorial so I will not be going into any depths on OCI this is just filling in a little background info.
 
 =head2 DBD::Oracle
 
-Well this was the first Driver for DBI a tool so common we hardly wvern think about using it. Just think
-the arectecute of this little program hasn't changed that much shince it was first introducred 20 years ago 
-and it still going strong so something mush be right with it. 
+Well this was the first Driver for DBI a tool so common we hardly even think about using it. Just think the architecture of this little program hasn't changed that much since it was first introduced 20 years ago and it still going strong so something mush be right with it. 
 
-Now to undersand the patch a little intro to the archetcure of this moduel would help out some and give you an idea how a larger
-scale XS module is put together. So here is the 25c tour
+Now to understand the patch a little intro to the architecture of this module would help out some and give you an idea how a larger scale XS module is put together. So here is the 25c tour
 
 =head3 Inside DB::Oracle
 Browsing the code base of DBD::Oracle you will quickly notice is is unlike you typical CPAN Perl module and even the 
 XS modules you have been playing with.  
 
-In the root folder you will find the typical CPAN boiler plate, Makefile.PL, CHANGELOG etc. you will also see two  
- .c files 'dbdimp.c' and 'oci8.c' a nubmer of '.h' files which are 'C' header an XS file 'Oracle.xs' pluse a 
- number of other that are not imprortant at the time.
+In the root folder you will find the typical CPAN boiler plate, Makefile.PL, CHANGELOG etc. you will also see two  .c files 'dbdimp.c' and 'oci8.c' a number of '.h' files which are 'C' header an XS file 'Oracle.xs' plus a  number of other that are not important at the time.
  
-If you follow down though the 'lib' dir you will eventually get to Oracle.pm and then a few other bit and beices under that.
+If you follow down though the 'lib' dir you will eventually get to Oracle.pm and then a few other bit and pieces under that.
 
-Now DBD::Oralce is a little different than what you might of seen so far. It uses the 'DynaLoader' module to load in all 
-the aformentioned '.c' and '.h' files and you XS file and hopefully it all works, again this is rather old code going 
-back to 1994 yet again.
+Now DBD::Oralce is a little different than what you might of seen so far. It uses the 'DynaLoader' module to load in all the aforementioned '.c' and '.h' files and your XS file and hopefully it all works.  Now DynaLaoder again this is rather old code going back to 1994 yet again and was written specially for DBI if I remember my ancient history well. 
 
-Well the 'DynaLoader' my suck it in but you also need to 'bootstrap' into you perl so in the perl code (and most DBDs are
-the same) is a little like this.
+Well the 'DynaLoader' may suck it all in but you also need to 'bootstrap' into you Perl so in the begining section of DBD::Oracles perl code (and most DBDs are much the same) is a little like this.
 
 =over
 
@@ -72,16 +57,11 @@ the same) is a little like this.
  
 =back
 
-Now besides this DBD::Oracle works much the same as any XS Module have a look inside and find the 'ora_fetch_scroll' sub 
-you will fide tha corosponding sub in Oracle.pm, now the majority of the calls form Perl to 'c' will not
-be found in either one but in one of the 'c' files, for example 'connect' is actully found in 'dbdimp.c'
-and for historical resones in not called 'connect' but acutally called 'dbd_db_login6'. Now what we are getting into
-here is how DBI works as this is the 'connect' we call from DBI that calles the 'dbd_db_login6' is what ever driver happens
+Now besides this DBD::Oracle works much the same as any XS Module have a look inside and find the 'ora_fetch_scroll' sub you will find the corresponding sub in Oracle.pm, now the majority of the calls form Perl to 'c' will not
+be found in either one but in one of the 'c' files, for example 'connect' is actually found in 'dbdimp.c'
+and for historical reasons it is not called 'connect' but called 'dbd_db_login6'. Now what we are getting into here is how DBI works as this is the 'connect' we call from DBI that calls the 'dbd_db_login6' in the 'bootstrped' DBD::ORacle or what ever driver happens
 to be running.
 
-So things are a little different in this type of 'dynamic' XS program.  Complex? Yes! Hard to Understand? Yes! Impossiable
-to work with? No!
-
-
+So things are a little different in this type of 'dynamic' XS program.  Complex? Yes! Hard to Understand? Yes! Impossible to work with? No!
 
 
